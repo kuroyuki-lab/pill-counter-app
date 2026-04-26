@@ -47,13 +47,13 @@ if uploaded_file and st.session_state.current_count is None:
 
     # 🔥 ローディング表示
     with st.spinner("カウント中..."):
-    with tempfile.NamedTemporaryFile(delete=False, suffix=".jpg") as tmp:
-        image.save(tmp.name)
-        try:
-            result = CLIENT.infer(tmp.name, model_id="pill-counter-itcml/5")
-        except Exception:
-            st.error("画像の解析に失敗しました。もう一度撮影してください。")
-            st.stop()
+        with tempfile.NamedTemporaryFile(delete=False, suffix=".jpg") as tmp:
+            image.save(tmp.name)
+            try:
+                result = CLIENT.infer(tmp.name, model_id="pill-counter-itcml/5")
+            except Exception:
+                st.error("画像の解析に失敗しました。もう一度撮影してください。")
+                st.stop()
             
         st.session_state.current_count = len(result["predictions"])
 
