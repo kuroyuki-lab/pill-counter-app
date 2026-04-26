@@ -41,29 +41,27 @@ if uploaded_file is None:
 if uploaded_file and st.session_state.current_count is None:
     image = Image.open(uploaded_file)
     image = image.convert("RGB")
-    image.thumbnail((1024, 1024), Image.LANCZOS)
+    image.thumbnail((1024, 1024))
 
     st.session_state.image = image
 
-    # 🔥 ローディング表示
-with st.spinner("カウント中..."):
-    with tempfile.NamedTemporaryFile(delete=False, suffix=".jpg") as tmp:
-        image.save(tmp.name)
-        try:
-            result = CLIENT.infer(tmp.name, model_id="pill-counter-itcml/5")
-        except Exception:
-            st.error("画像の解析に失敗しました。もう一度撮影してください。")
-            st.stop()
+    with st.spinner("カウント中..."):
+        with tempfile.NamedTemporaryFile(delete=False, suffix=".jpg") as tmp:
+            image.save(tmp.name)
+            try:
+                result = CLIENT.infer(tmp.name, model_id="pill-counter-itcml/5")
+            except Exception:
+                st.error("画像の解析に失敗しました。もう一度撮影してください。")
+                st.stop()
 
-if "predictions" not in result:
-    st.error("結果の取得に失敗しました")
-    st.stop()
+    if "predictions" not in result:
+        st.error("結果の取得に失敗しました")
+        st.stop()
 
-predictions = result["predictions"]
+    predictions = result["predictions"]
+    filtered = [p for p in predictions if p["confidence"] > 0.5]
 
-filtered = [p for p in predictions if p["confidence"] > 0.5]
-
-st.session_state.current_count = len(filtered)
+    st.session_state.current_count = len(filtered)
 
 # 描画用コピー
 draw_image = st.session_state.image.copy()
