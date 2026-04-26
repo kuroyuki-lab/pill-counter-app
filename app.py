@@ -4,9 +4,11 @@ from PIL import Image
 import tempfile
 
 # --- Roboflow ---
+api_key = st.secrets["ROBOFLOW_API_KEY"]
+
 CLIENT = InferenceHTTPClient(
     api_url="https://serverless.roboflow.com",
-    api_key=st.secrets["API_KEY"]
+    api_key=api_key
 )
 
 st.title("💊 錠剤カウンター")
