@@ -37,7 +37,7 @@ uploaded_file = st.file_uploader(
 if uploaded_file and st.session_state.current_count is None:
     image = Image.open(uploaded_file)
     image = image.convert("RGB")
-    image.thumbnail((1024, 1024))
+    image.thumbnail((1024, 1024),image.LANCZOS)
 
     st.session_state.image = image
 
