@@ -45,12 +45,12 @@ if uploaded_file and st.session_state.current_count is None:
     with st.spinner("カウント中..."):
         with tempfile.NamedTemporaryFile(delete=False, suffix=".jpg") as tmp:
             image.save(tmp.name)
- 　　　　    result = CLIENT.infer(
-    　　　　     tmp.name,
-     　　　　    model_id="pill-counter-itcml/5",
-   　　　　      confidence=0.5,
-    　　　　     overlap=0.3
-   　　　　  )
+            result = CLIENT.infer(
+                tmp.name,
+                model_id="pill-counter-itcml/5",
+                confidence=0.5,
+                overlap=0.3
+            )
     st.session_state.current_count = len(result["predictions"])
 
 # --- 表示 ---
