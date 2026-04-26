@@ -61,10 +61,8 @@ if uploaded_file and st.session_state.current_count is None:
     predictions = result["predictions"]
     filtered = [p for p in predictions if p["confidence"] > 0.5]
 
-    st.session_state.current_count = len(filtered)
-
 # 描画用コピー
-draw_image = st.session_state.image.copy()
+draw_image = image.copy()
 draw = ImageDraw.Draw(draw_image)
 
 for p in filtered:
