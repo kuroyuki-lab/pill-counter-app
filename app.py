@@ -51,6 +51,11 @@ if uploaded_file and st.session_state.current_count is None:
             )
     st.session_state.current_count = len(result["predictions"])
 
+predictions = result["predictions"]
+filtered = [p for p in predictions if p["confidence"] > 0.5]
+
+st.session_state.current_count = len(filtered)
+
 # --- 表示 ---
 if st.session_state.image:
     st.image(st.session_state.image)
