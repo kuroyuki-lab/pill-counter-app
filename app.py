@@ -43,8 +43,6 @@ if uploaded_file and st.session_state.current_count is None:
     image = image.convert("RGB")
     image.thumbnail((1024, 1024))
 
-    st.session_state.image = image
-
     with st.spinner("カウント中..."):
         with tempfile.NamedTemporaryFile(delete=False, suffix=".jpg") as tmp:
             image.save(tmp.name)
@@ -61,29 +59,26 @@ if uploaded_file and st.session_state.current_count is None:
     predictions = result["predictions"]
     filtered = [p for p in predictions if p["confidence"] > 0.5]
 
-# 描画用コピー
-draw_image = image.copy()
-draw = ImageDraw.Draw(draw_image)
+    # 🔥 ここから描画（中に入れる！）
+    draw_image = image.copy()
+    draw = ImageDraw.Draw(draw_image)
 
-for p in filtered:
-    x = p["x"]
-    y = p["y"]
-    w = p["width"]
-    h = p["height"]
+    for p in filtered:
+        x = p["x"]
+        y = p["y"]
+        w = p["width"]
+        h = p["height"]
 
-    # 四角の座標（中心→左上右下に変換）
-    x1 = x - w / 2
-    y1 = y - h / 2
-    x2 = x + w / 2
-    y2 = y + h / 2
+        x1 = x - w / 2
+        y1 = y - h / 2
+        x2 = x + w / 2
+        y2 = y + h / 2
 
-    draw.rectangle([x1, y1, x2, y2], outline="red", width=3)
+        draw.rectangle([x1, y1, x2, y2], outline="red", width=3)
 
-# 表示用画像に差し替え
-st.session_state.image = draw_image
-
-# カウント
-st.session_state.current_count = len(filtered)
+    # 保存
+    st.session_state.image = draw_image
+    st.session_state.current_count = len(filtered)
 
 # --- 表示 ---
 if st.session_state.image:
