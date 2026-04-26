@@ -81,7 +81,7 @@ if uploaded_file and st.session_state.current_count is None:
     st.session_state.current_count = len(filtered)
 
 # --- 表示 ---
-if st.session_state.image:
+if st.session_state.image is not None:
     st.image(st.session_state.image)
 
 if st.session_state.current_count is not None:
@@ -96,7 +96,7 @@ col1, col2 = st.columns(2)
 confirm = st.checkbox("このカウントでOK")
 
 with col1:
-    if st.button("✅ 追加") and confirm:
+    if st.button("✅ 追加") and confirm and st.session_state.current_count is not None:
         st.session_state.total += st.session_state.current_count
         st.session_state.current_count = None
         st.session_state.image = None
