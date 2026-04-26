@@ -51,7 +51,7 @@ if uploaded_file and st.session_state.current_count is None:
         image.save(tmp.name)
         try:
             result = CLIENT.infer(tmp.name, model_id="pill-counter-itcml/5")
-        except Exception as e:
+        except Exception:
             st.error("画像の解析に失敗しました。もう一度撮影してください。")
             st.stop()
             
