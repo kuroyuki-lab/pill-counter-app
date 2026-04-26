@@ -34,6 +34,9 @@ uploaded_file = st.file_uploader(
     key=st.session_state.uploader_key
 )
 
+if uploaded_file is None:
+    st.info("画像を撮影または選択してください")
+
 if uploaded_file and st.session_state.current_count is None:
     image = Image.open(uploaded_file)
     image = image.convert("RGB")
@@ -43,13 +46,15 @@ if uploaded_file and st.session_state.current_count is None:
 
     # 🔥 ローディング表示
     with st.spinner("カウント中..."):
-        with tempfile.NamedTemporaryFile(delete=False, suffix=".jpg") as tmp:
-            image.save(tmp.name)
-            result = CLIENT.infer(
-                tmp.name,
-                model_id="pill-counter-itcml/5",
-            )
-    st.session_state.current_count = len(result["predictions"])
+    with tempfile.NamedTemporaryFile(delete=False, suffix=".jpg") as tmp:
+        image.save(tmp.name)
+        try:
+            result = CLIENT.infer(tmp.name, model_id="pill-counter-itcml/5")
+        except Exception as e:
+            st.error("画像の解析に失敗しました。もう一度撮影してください。")
+            st.stop()
+            
+        st.session_state.current_count = len(result["predictions"])
 
 predictions = result["predictions"]
 filtered = [p for p in predictions if p["confidence"] > 0.5]
@@ -64,10 +69,15 @@ if st.session_state.current_count is not None:
     st.markdown(f"# 🧮 {st.session_state.current_count} 個")
 
 # --- 操作 ---
+
+st.write("※ カウント結果を確認してから追加してください")
+
 col1, col2 = st.columns(2)
 
+confirm = st.checkbox("このカウントでOK")
+
 with col1:
-    if st.button("✅ 追加"):
+    if st.button("✅ 追加") and confirm:
         st.session_state.total += st.session_state.current_count
         st.session_state.current_count = None
         st.session_state.image = None
