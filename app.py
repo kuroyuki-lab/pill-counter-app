@@ -48,8 +48,10 @@ if uploaded_file and st.session_state.current_count is None:
             result = CLIENT.infer(
                 tmp.name,
                 model_id="pill-counter-itcml/5",
-                confidence=0.5,
-                overlap=0.3
+                params={
+                    "confidence": 0.5,
+                    "overlap": 0.3
+                }
             )
     st.session_state.current_count = len(result["predictions"])
 
