@@ -97,7 +97,7 @@ if uploaded_file:
             x2 = x + w / 2
             y2 = y + h / 2
 
-            r = 10
+            r = 7
 
             draw.ellipse(
                 [x - r, y - r, x + r, y + r],
