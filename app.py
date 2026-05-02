@@ -112,6 +112,12 @@ if uploaded_file:
     st.session_state.image = final_image
     st.session_state.total_count = total_count
 
+
+if not uploaded_file:
+    st.session_state.total_count = None
+    st.session_state.image = None
+
+
 # --- 表示 ---
 if st.session_state.image is not None:
     st.image(st.session_state.image)
