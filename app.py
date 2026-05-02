@@ -101,7 +101,7 @@ if uploaded_file:
 
             draw.ellipse(
                 [x - r, y - r, x + r, y + r],
-                fill="yellow"
+                fill="lime"
             )
 
     st.session_state.image = final_image
