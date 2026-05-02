@@ -4,7 +4,11 @@ from PIL import ImageDraw
 import tempfile
 
 # --- Roboflow ---
-api_key = st.secrets["ROBOFLOW_API_KEY"]
+@st.cache_resource
+def get_api_key():
+    return st.secrets["ROBOFLOW_API_KEY"]
+
+api_key = get_api_key()
 
 st.title("💊 錠剤カウンター")
 st.write("※ 錠剤は重ならないよう軽く広げてください")
@@ -26,6 +30,7 @@ if "uploader_key" not in st.session_state:
 uploaded_file = st.file_uploader(
     "📸 写真を撮影または選択",
     type=["jpg", "jpeg", "png"],
+    accept_multiple_files=True 
     key=st.session_state.uploader_key
 )
 
@@ -33,67 +38,68 @@ if uploaded_file is None:
     st.info("画像を撮影または選択してください")
 
 if uploaded_file and st.session_state.current_count is None:
-    image = Image.open(uploaded_file)
-    image = image.convert("RGB")
-    image.thumbnail((1024, 1024))
+    total_count = 0
+    final_image = None
 
-    with st.spinner("カウント中..."):
-        with tempfile.NamedTemporaryFile(delete=False, suffix=".jpg") as tmp:
-            image.save(tmp.name)
-            try:
-                import requests
+    for file in uploaded_file:
+        image = Image.open(file)
+        image = image.convert("RGB")
+        image.thumbnail((1024, 1024))
 
-                url = "https://serverless.roboflow.com/pill-counter-itcml/5"
-                params = {
-                    "api_key": api_key
-                }
+        with st.spinner("カウント中..."):
+            with tempfile.NamedTemporaryFile(delete=False, suffix=".jpg") as tmp:
+                image.save(tmp.name)
+                try:
+                    import requests
 
-                with open(tmp.name, "rb") as f:
-                    response = requests.post(
-                        url,
-                        params=params,
-                        files={"file": f},
-                        timeout=10
-                )
-                    
-                if response.status_code != 200:
-                    st.error(f"APIエラー: {response.status_code}")
-                    st.write(response.text)  # 中身確認できる
+                    url = "https://serverless.roboflow.com/pill-counter-itcml/5"
+                    params = {"api_key": api_key}
+
+                    with open(tmp.name, "rb") as f:
+                        response = requests.post(
+                            url,
+                            params=params,
+                            files={"file": f},
+                            timeout=10
+                        )
+
+                    if response.status_code != 200:
+                        st.warning("通信エラー。もう一度撮影してください")
+                        st.stop()
+
+                    result = response.json()
+
+                except Exception as e:
+                    st.error(f"エラー内容: {e}")
                     st.stop()
 
-                result = response.json()
-            
-            except Exception as e:
-                st.error(f"エラー内容: {e}")
-                st.stop()
+        if "predictions" not in result:
+            continue
 
-    if "predictions" not in result:
-        st.error("結果の取得に失敗しました")
-        st.stop()
+        predictions = result["predictions"]
+        filtered = [p for p in predictions if p["confidence"] > 0.5]
 
-    predictions = result["predictions"]
-    filtered = [p for p in predictions if p["confidence"] > 0.5]
+        total_count += len(filtered)
 
-    # 🔥 ここから描画（中に入れる！）
-    draw_image = image.copy()
-    draw = ImageDraw.Draw(draw_image)
+        # 最後の1枚だけ表示（軽くする）
+        final_image = image.copy()
+        draw = ImageDraw.Draw(final_image)
 
-    for p in filtered:
-        x = p["x"]
-        y = p["y"]
-        w = p["width"]
-        h = p["height"]
+        for p in filtered:
+            x = p["x"]
+            y = p["y"]
+            w = p["width"]
+            h = p["height"]
 
-        x1 = x - w / 2
-        y1 = y - h / 2
-        x2 = x + w / 2
-        y2 = y + h / 2
+            x1 = x - w / 2
+            y1 = y - h / 2
+            x2 = x + w / 2
+            y2 = y + h / 2
 
-        draw.rectangle([x1, y1, x2, y2], outline="red", width=3)
+            draw.rectangle([x1, y1, x2, y2], outline="red", width=3)
 
-    # 保存
-    st.session_state.image = draw_image
-    st.session_state.current_count = len(filtered)
+    st.session_state.image = final_image
+    st.session_state.current_count = total_count
 
 # --- 表示 ---
 if st.session_state.image is not None:
@@ -116,6 +122,7 @@ with col1:
         st.session_state.current_count = None
         st.session_state.image = None
         st.session_state.uploader_key += 1
+        st.success("追加しました")
 
 with col2:
     if st.button("❌ 破棄"):
