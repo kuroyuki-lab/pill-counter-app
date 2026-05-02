@@ -136,9 +136,6 @@ st.markdown(f"## 合計：{st.session_state.total} 個")
 
 # --- リセット ---
 if st.button("🔄 リセット"):
-    st.session_state.clear()
+    for key in list(st.session_state.keys()):
+        del st.session_state[key]
     st.rerun()
-    st.session_state.total = 0
-    st.session_state.current_count = None
-    st.session_state.image = None
-    st.session_state.uploader_key += 1
