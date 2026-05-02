@@ -125,12 +125,14 @@ if st.session_state.current_count is not None:
 
 st.write("※ カウント結果を確認してから追加してください")
 
-col1 = st.columns(1)
+confirm = st.checkbox("このカウントでOK", value=True)
 
-confirm = st.checkbox("このカウントでOK")
-
-with col1:
-    if st.button("✅ 追加") and confirm and st.session_state.current_count is not None:
+if st.button("✅ 追加"):
+    if not confirm:
+        st.warning("チェックを入れてください")
+    elif st.session_state.current_count is None:
+        st.warning("カウント結果がありません")
+    else:
         st.session_state.total += st.session_state.current_count
         st.session_state.current_count = None
         st.session_state.image = None
