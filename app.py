@@ -14,8 +14,6 @@ st.title("💊 錠剤カウンター")
 st.write("※ 錠剤は重ならないよう軽く広げてください")
 
 # --- セッション ---
-if "total" not in st.session_state:
-    st.session_state.total = 0
 
 if "current_count" not in st.session_state:
     st.session_state.current_count = None
@@ -120,26 +118,6 @@ if st.session_state.image is not None:
 
 if st.session_state.current_count is not None:
     st.markdown(f"# 🧮 {st.session_state.current_count} 個")
-
-# --- 操作 ---
-
-st.write("※ カウント結果を確認してから追加してください")
-
-confirm = st.checkbox("このカウントでOK", value=True)
-
-if st.button("✅ 追加"):
-    if st.session_state.current_count is None:
-        st.warning("カウント結果がありません")
-    else:
-        st.session_state.total += st.session_state.current_count
-        st.session_state.current_count = None
-        st.session_state.image = None
-        st.session_state.uploader_key += 1
-        st.success("追加しました")
-
-
-# --- 合計 ---
-st.markdown(f"## 合計：{st.session_state.total} 個")
 
 # --- リセット ---
 if st.button("🔄 リセット"):
