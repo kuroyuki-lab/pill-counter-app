@@ -101,7 +101,7 @@ if uploaded_file:
 
             # 外側（黒）
             draw.ellipse(
-                [x - r - 2, y - r - 2, x + r + 2, y + r + 2],
+                [x - r - 1, y - r - 1, x + r + 1, y + r + 1],
                 fill="black"
             )
 
