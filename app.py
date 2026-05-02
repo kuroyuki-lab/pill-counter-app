@@ -99,6 +99,13 @@ if uploaded_file:
 
             r = 5
 
+            # 外側（黒）
+            draw.ellipse(
+                [x - r - 2, y - r - 2, x + r + 2, y + r + 2],
+                fill="black"
+            )
+
+            # 内側（色）
             draw.ellipse(
                 [x - r, y - r, x + r, y + r],
                 fill="lime"
