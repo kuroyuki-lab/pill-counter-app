@@ -30,7 +30,7 @@ if "uploader_key" not in st.session_state:
 uploaded_file = st.file_uploader(
     "📸 写真を撮影または選択",
     type=["jpg", "jpeg", "png"],
-    accept_multiple_files=True 
+    accept_multiple_files=True,
     key=st.session_state.uploader_key
 )
 
