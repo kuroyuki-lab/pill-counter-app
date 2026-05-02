@@ -97,7 +97,12 @@ if uploaded_file:
             x2 = x + w / 2
             y2 = y + h / 2
 
-            draw.rectangle([x1, y1, x2, y2], outline="red", width=3)
+            r = 10
+
+            draw.ellipse(
+                [x - r, y - r, x + r, y + r],
+                fill="yellow"
+            )
 
     st.session_state.image = final_image
     st.session_state.current_count = total_count
