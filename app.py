@@ -1,16 +1,10 @@
 import streamlit as st
-from inference_sdk import InferenceHTTPClient
 from PIL import Image
 from PIL import ImageDraw
 import tempfile
 
 # --- Roboflow ---
 api_key = st.secrets["ROBOFLOW_API_KEY"]
-
-CLIENT = InferenceHTTPClient(
-    api_url="https://serverless.roboflow.com",
-    api_key=api_key
-)
 
 st.title("💊 錠剤カウンター")
 st.write("※ 錠剤は重ならないよう軽く広げてください")
