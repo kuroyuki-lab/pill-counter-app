@@ -110,14 +110,14 @@ if uploaded_file:
             )
 
     st.session_state.image = final_image
-    st.session_state.current_count = total_count
+    st.session_state.total_count = total_count
 
 # --- 表示 ---
 if st.session_state.image is not None:
     st.image(st.session_state.image)
 
-if st.session_state.current_count is not None:
-    st.markdown(f"# 🧮 合計：{total_count} 個")
+if "total_count" in st.session_state:
+    st.markdown(f"# 🧮 合計：{st.session_state.total_count} 個")
 
 # --- リセット ---
 if st.button("🔄 リセット"):
