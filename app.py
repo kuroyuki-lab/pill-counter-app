@@ -47,7 +47,28 @@ if uploaded_file and st.session_state.current_count is None:
         with tempfile.NamedTemporaryFile(delete=False, suffix=".jpg") as tmp:
             image.save(tmp.name)
             try:
-                result = CLIENT.infer(tmp.name, model_id="pill-counter-itcml/5")
+                import requests
+
+                url = "https://serverless.roboflow.com/pill-counter-itcml/5"
+                params = {
+                    "api_key": api_key
+                }
+
+                with open(tmp.name, "rb") as f:
+                    response = requests.post(
+                        url,
+                        params=params,
+                        files={"file": f},
+                        timeout=10
+                )
+                    
+                if response.status_code != 200:
+                    st.error(f"APIエラー: {response.status_code}")
+                    st.write(response.text)  # 中身確認できる
+                    st.stop()
+
+                result = response.json()
+            
             except Exception as e:
                 st.error(f"エラー内容: {e}")
                 st.stop()
