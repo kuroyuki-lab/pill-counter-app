@@ -125,7 +125,7 @@ if st.session_state.current_count is not None:
 
 st.write("※ カウント結果を確認してから追加してください")
 
-col1, col2 = st.columns(2)
+col1 = st.columns(1)
 
 confirm = st.checkbox("このカウントでOK")
 
@@ -137,11 +137,6 @@ with col1:
         st.session_state.uploader_key += 1
         st.success("追加しました")
 
-with col2:
-    if st.button("❌ 破棄"):
-        st.session_state.current_count = None
-        st.session_state.image = None
-        st.session_state.uploader_key += 1
 
 # --- 合計 ---
 st.markdown(f"## 合計：{st.session_state.total} 個")
