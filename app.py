@@ -128,9 +128,7 @@ st.write("※ カウント結果を確認してから追加してください")
 confirm = st.checkbox("このカウントでOK", value=True)
 
 if st.button("✅ 追加"):
-    if not confirm:
-        st.warning("チェックを入れてください")
-    elif st.session_state.current_count is None:
+    if st.session_state.current_count is None:
         st.warning("カウント結果がありません")
     else:
         st.session_state.total += st.session_state.current_count
