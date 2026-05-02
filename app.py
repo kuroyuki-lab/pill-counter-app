@@ -136,6 +136,8 @@ st.markdown(f"## 合計：{st.session_state.total} 個")
 
 # --- リセット ---
 if st.button("🔄 リセット"):
+    st.session_state.clear()
+    st.rerun()
     st.session_state.total = 0
     st.session_state.current_count = None
     st.session_state.image = None
