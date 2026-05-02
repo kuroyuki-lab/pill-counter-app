@@ -114,7 +114,7 @@ if uploaded_file:
 
 
 if not uploaded_file:
-    st.session_state.total_count = None
+    st.session_state.total_count = 0
     st.session_state.image = None
 
 
