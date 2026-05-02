@@ -35,6 +35,10 @@ uploaded_file = st.file_uploader(
 if uploaded_file is None:
     st.info("画像を撮影または選択してください")
 
+if not uploaded_file:
+    st.session_state.total_count = None
+    st.session_state.image = None
+
 if uploaded_file:
     st.session_state.current_count = None
     total_count = 0
