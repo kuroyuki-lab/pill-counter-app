@@ -117,10 +117,9 @@ if st.session_state.image is not None:
     st.image(st.session_state.image)
 
 if st.session_state.current_count is not None:
-    st.markdown(f"# 🧮 {st.session_state.current_count} 個")
+    st.markdown(f"# 🧮 合計：{total_count} 個")
 
-# --- リセット ---
 if st.button("🔄 リセット"):
-    for key in list(st.session_state.keys()):
-        del st.session_state[key]
+    st.session_state.clear()
+    st.session_state.uploader_key = 0  # or +1でもOK
     st.rerun()
